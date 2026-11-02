@@ -17,7 +17,10 @@ async function load() {
   vi.resetModules();
   (globalThis as any).browser = {
     storage: { local: store, onChanged: { addListener: vi.fn() } },
-    runtime: { sendMessage: vi.fn() },
+    runtime: {
+      sendMessage: vi.fn(),
+      getURL: vi.fn(() => "chrome-extension://test/"),
+    },
     identity: { getRedirectURL: vi.fn() },
   };
   return await import("../entrypoints/utils/oauth");
@@ -113,6 +116,8 @@ describe("refreshAccessToken in api_token mode", () => {
       "refresh_token",
       "auth_mode",
     ]);
-    expect((globalThis as any).browser.runtime.sendMessage).not.toHaveBeenCalled();
+    expect(
+      (globalThis as any).browser.runtime.sendMessage,
+    ).not.toHaveBeenCalled();
   });
 });
