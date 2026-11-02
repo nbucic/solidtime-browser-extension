@@ -81,7 +81,11 @@ describe("getNotionPageInfo", () => {
     setUrl(`/Some-Task-${ID_A}`);
     document.body.innerHTML = `${title("  My task \n")}${props}`;
     const info = getNotionPageInfo();
-    expect(info).toMatchObject({ pageId: ID_A, title: "My task", inPeek: false });
+    expect(info).toMatchObject({
+      pageId: ID_A,
+      title: "My task",
+      inPeek: false,
+    });
     expect(info?.fullUrl).toBe(window.location.href);
   });
 
@@ -160,5 +164,31 @@ describe("removeNotionTimeTrackingButton", () => {
 
   it("does nothing when absent", () => {
     expect(() => removeNotionTimeTrackingButton()).not.toThrow();
+  });
+});
+
+import { isTrackingPage } from "../entrypoints/utils/notion";
+
+describe("isTrackingPage", () => {
+  it("matches when the running entry has the page title", () => {
+    expect(isTrackingPage("Write report", "Write report")).toBe(true);
+  });
+
+  it("ignores surrounding and repeated whitespace", () => {
+    expect(isTrackingPage("  Write   report ", "Write report")).toBe(true);
+  });
+
+  it("does not match a different task", () => {
+    expect(isTrackingPage("Other task", "Write report")).toBe(false);
+  });
+
+  it("does not match an entry without a description", () => {
+    expect(isTrackingPage(null, "Write report")).toBe(false);
+    expect(isTrackingPage(undefined, "Write report")).toBe(false);
+  });
+
+  it("matches the Untitled fallback only for an untitled entry", () => {
+    expect(isTrackingPage("Untitled", "Untitled")).toBe(true);
+    expect(isTrackingPage("", "Untitled")).toBe(false);
   });
 });
