@@ -6,7 +6,7 @@ export default defineConfig({
   manifest: {
     permissions: ["storage", "identity"],
     host_permissions: ["<all_urls>"],
-    name: "Solidtime",
+    name: "Solidtime (Enterwell)",
     description:
       "Browser extension for Solidtime - the modern open-source time tracker",
     content_security_policy: {
@@ -14,7 +14,7 @@ export default defineConfig({
     },
     browser_specific_settings: {
       gecko: {
-        id: "hello@solidtime.io",
+        id: "solidtime-notion@enterwell.net",
         data_collection_permissions: {
           required: [
             "personallyIdentifyingInfo",
