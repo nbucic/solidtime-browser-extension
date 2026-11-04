@@ -192,3 +192,25 @@ describe("isTrackingPage", () => {
     expect(isTrackingPage("", "Untitled")).toBe(false);
   });
 });
+
+import { getRunningEntry } from "../entrypoints/utils/notion";
+import { getCurrentTimeEntry } from "../entrypoints/utils/timeEntries";
+
+describe("getRunningEntry", () => {
+  const mocked = vi.mocked(getCurrentTimeEntry);
+
+  it("returns the running entry", async () => {
+    mocked.mockResolvedValue({ data: { id: "e1", description: "A" } } as any);
+    expect(await getRunningEntry()).toMatchObject({ id: "e1" });
+  });
+
+  it("returns null when the API answers 404 (no active timer)", async () => {
+    mocked.mockRejectedValue({ response: { status: 404 } });
+    expect(await getRunningEntry()).toBeNull();
+  });
+
+  it("rethrows other errors", async () => {
+    mocked.mockRejectedValue({ response: { status: 500 } });
+    await expect(getRunningEntry()).rejects.toBeTruthy();
+  });
+});
